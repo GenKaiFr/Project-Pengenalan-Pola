@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Sentimen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+        
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            margin-top: 30px;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .bagian {
+            margin: 16px 0;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .bagian:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .positif {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+        
+        .negatif {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+        }
+        
+        .netral {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+        
+        .bagian-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .bagian-text {
+            font-style: italic;
+            color: #6b7280;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border-left: 3px solid #e5e7eb;
+        }
+        
+        .sentiment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .sentiment-badge.positif {
+            background: #10b981;
+            color: white;
+        }
+        
+        .sentiment-badge.negatif {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .sentiment-badge.netral {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .probability-bars {
+            margin-top: 12px;
+            display: grid;
+            gap: 8px;
+        }
+        
+        .prob-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        
+        .prob-label {
+            min-width: 80px;
+            font-weight: 500;
+        }
+        
+        .prob-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .prob-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+        
+        .prob-fill.positif {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+        
+        .prob-fill.negatif {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+        
+        .prob-value {
+            min-width: 45px;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        .ringkasan {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .ringkasan-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-number.positif {
+            color: #10b981;
+        }
+        
+        .stat-number.negatif {
+            color: #ef4444;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .conclusion {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #4f46e5;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> Analisis Sentimen</h1>
+            <p>Analisis Sentimen Teks Bahasa Indonesia</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <label class="input-label" for="inputText">
+                    <i class="fas fa-edit"></i> Masukkan Teks untuk Dianalisis
+                </label>
+                <div class="input-wrapper">
+                    <textarea id="inputText" placeholder="Contoh: Saya merasa senang, bahagia, dan bangga karena hasil kerja yang bagus, keren, dan berhasil, bahkan terasa luar biasa dan mantap, namun di sisi lain sempat muncul perasaan lelah, cemas, dan khawatir karena beberapa kendala yang menyebalkan, membuat situasi terasa stress dan hampir putus asa, meskipun akhirnya saya tetap optimis, bersemangat, dan grateful karena masalah tersebut tidak berujung gagal atau buruk.">Saya merasa senang, bahagia, dan bangga karena hasil kerja yang bagus, keren, dan berhasil, bahkan terasa luar biasa dan mantap, namun di sisi lain sempat muncul perasaan lelah, cemas, dan khawatir karena beberapa kendala yang menyebalkan, membuat situasi terasa stress dan hampir putus asa, meskipun akhirnya saya tetap optimis, bersemangat, dan grateful karena masalah tersebut tidak berujung gagal atau buruk.</textarea>
+                </div>
+            </div>
+            
+            <button class="analyze-btn" onclick="analisaSentimen()">
+                <i class="fas fa-chart-line"></i> Analisis Sentimen
+            </button>
+            
+            <div id="results" class="results" style="display: none;">
+                <div class="results-header">
+                    <i class="fas fa-clipboard-list"></i> Hasil Analisis
+                </div>
+                <div id="bagianResults"></div>
+                <div id="ringkasan" class="ringkasan"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dataset training sederhana
+        const trainingData = [
+            { text: "saya sangat senang", label: "positif" },
+            { text: "aku bahagia sekali", label: "positif" },
+            { text: "hari ini menyenangkan", label: "positif" },
+            { text: "aku sedih sekali", label: "negatif" },
+            { text: "ini sangat buruk", label: "negatif" },
+            { text: "aku kecewa", label: "negatif" }
+        ];
+
+        // Kata-kata positif dan negatif untuk klasifikasi
+        const kataPositif = [
+            "senang", "bahagia", "menyenangkan", "bagus", "suka", "cinta", "gembira", "puas", "hebat", "mantap",
+            "indah", "cantik", "luar biasa", "fantastis", "menakjubkan", "sempurna", "terbaik", "keren", "asyik", "menarik",
+            "berhasil", "sukses", "bangga", "optimis", "antusias", "bersemangat", "excited", "amazing", "wonderful", "excellent",
+            "lega", "tenang", "damai", "nyaman", "fresh", "segar", "cerah", "positif", "beruntung", "grateful",
+            "terima kasih", "appreciate", "love", "sayang", "rindu", "vermiss", "miss", "caring", "peduli", "perhatian"
+        ];
+        
+        const kataNegatif = [
+            "sedih", "buruk", "kecewa", "marah", "benci", "jelek", "tidak", "bosan", "lelah", "susah",
+            "menyebalkan", "kesal", "jengkel", "stress", "depresi", "putus asa", "hopeless", "terrible", "awful", "bad",
+            "gagal", "rugi", "sakit", "pusing", "mual", "muntah", "demam", "flu", "batuk", "pilek",
+            "takut", "cemas", "khawatir", "nervous", "panik", "gelisah", "resah", "was-was", "deg-degan", "tegang",
+            "hancur", "rusak", "patah", "robek", "pecah", "hilang", "lupa", "salah", "error", "broken"
+        ];
+
+        function hitungSkor(text) {
+            const kata = text.toLowerCase().split(/\s+/);
+            let skorPositif = 0;
+            let skorNegatif = 0;
+
+            kata.forEach(k => {
+                if (kataPositif.includes(k)) skorPositif++;
+                if (kataNegatif.includes(k)) skorNegatif++;
+            });
+
+            return { positif: skorPositif, negatif: skorNegatif };
+        }
+
+        function prediksiSentimen(text) {
+            const skor = hitungSkor(text);
+            
+            // Jika tidak ada kata sentimen, anggap netral
+            if (skor.positif === 0 && skor.negatif === 0) {
+                return {
+                    prediksi: "netral",
+                    probabilitas: {
+                        positif: 0.5,
+                        negatif: 0.5
+                    }
+                };
+            }
+            
+            // Hitung probabilitas langsung tanpa baseline yang membingungkan
+            const totalSkor = skor.positif + skor.negatif;
+            let probPositif, probNegatif;
+            
+            if (totalSkor === 0) {
+                probPositif = 0.5;
+                probNegatif = 0.5;
+            } else {
+                probPositif = skor.positif / totalSkor;
+                probNegatif = skor.negatif / totalSkor;
+            }
+            
+            let prediksi;
+            if (skor.positif > skor.negatif) {
+                prediksi = "positif";
+            } else if (skor.negatif > skor.positif) {
+                prediksi = "negatif";
+            } else {
+                prediksi = "netral";
+            }
+            
+            return {
+                prediksi: prediksi,
+                probabilitas: {
+                    positif: probPositif,
+                    negatif: probNegatif
+                }
+            };
+        }
+
+        function pecahKalimat(kalimat) {
+            // Regex untuk memecah kalimat berdasarkan koma dan kata sambung
+            const pemecah = /(,|\babis itu\b|\babis tu\b|\btapi\b|\btetapi\b|\bnamun\b|\blalu\b|\bkemudian\b|\bdan\b)/i;
+            
+            const parts = kalimat.split(pemecah);
+            const kalimatBagian = [];
+            let temp = "";
+
+            for (let p of parts) {
+                if (pemecah.test(p)) {
+                    if (temp.trim()) {
+                        kalimatBagian.push(temp.trim());
+                    }
+                    temp = "";
+                } else {
+                    temp += " " + p;
+                }
+            }
+
+            if (temp.trim()) {
+                kalimatBagian.push(temp.trim());
+            }
+
+            return kalimatBagian.filter(b => b.trim().length > 0);
+        }
+
+        function analisaSentimen() {
+            const inputText = document.getElementById('inputText').value;
+            
+            if (!inputText.trim()) {
+                alert('Silakan masukkan teks untuk dianalisis!');
+                return;
+            }
+
+            const bagianKalimat = pecahKalimat(inputText);
+            const resultsDiv = document.getElementById('results');
+            const bagianResultsDiv = document.getElementById('bagianResults');
+            const ringkasanDiv = document.getElementById('ringkasan');
+
+            let positifCount = 0;
+            let negatifCount = 0;
+            let bagianHTML = '';
+
+            bagianKalimat.forEach((bagian, index) => {
+                const hasil = prediksiSentimen(bagian);
+                
+                if (hasil.prediksi === 'positif') positifCount++;
+                else if (hasil.prediksi === 'negatif') negatifCount++;
+
+                const icon = hasil.prediksi === 'positif' ? 'fa-smile' : hasil.prediksi === 'negatif' ? 'fa-frown' : 'fa-meh';
+                
+                bagianHTML += `
+                    <div class="bagian ${hasil.prediksi}">
+                        <div class="bagian-header">
+                            <i class="fas ${icon}"></i> Bagian ${index + 1}
+                        </div>
+                        <div class="bagian-text">"${bagian}"</div>
+                        <div>
+                            <span class="sentiment-badge ${hasil.prediksi}">
+                                <i class="fas fa-tag"></i> ${hasil.prediksi.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="probability-bars">
+                            <div class="prob-item">
+                                <span class="prob-label"><i class="fas fa-smile" style="color: #10b981;"></i> Positif</span>
+                                <div class="prob-bar">
+                                    <div class="prob-fill positif" style="width: ${(hasil.probabilitas.positif * 100).toFixed(1)}%"></div>
+                                </div>
+                                <span class="prob-value">${(hasil.probabilitas.positif * 100).toFixed(1)}%</span>
+                            </div>
+                            <div class="prob-item">
+                                <span class="prob-label"><i class="fas fa-frown" style="color: #ef4444;"></i> Negatif</span>
+                                <div class="prob-bar">
+                                    <div class="prob-fill negatif" style="width: ${(hasil.probabilitas.negatif * 100).toFixed(1)}%"></div>
+                                </div>
+                                <span class="prob-value">${(hasil.probabilitas.negatif * 100).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            bagianResultsDiv.innerHTML = bagianHTML;
+
+            // Ringkasan
+            let kesimpulan = '';
+            if (positifCount > negatifCount) {
+                kesimpulan = 'Secara keseluruhan cerita ini memiliki sentimen POSITIF.';
+            } else if (negatifCount > positifCount) {
+                kesimpulan = 'Secara keseluruhan cerita ini memiliki sentimen NEGATIF.';
+            } else {
+                kesimpulan = 'Cerita memiliki sentimen SEIMBANG.';
+            }
+
+            const conclusionIcon = positifCount > negatifCount ? 'fa-smile-beam' : negatifCount > positifCount ? 'fa-sad-tear' : 'fa-meh';
+            const conclusionColor = positifCount > negatifCount ? '#10b981' : negatifCount > positifCount ? '#ef4444' : '#f59e0b';
+            
+            ringkasanDiv.innerHTML = `
+                <div class="ringkasan-header">
+                    <i class="fas fa-chart-pie"></i> Ringkasan Sentimen
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number positif">${positifCount}</div>
+                        <div class="stat-label"><i class="fas fa-smile"></i> Positif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number negatif">${negatifCount}</div>
+                        <div class="stat-label"><i class="fas fa-frown"></i> Negatif</div>
+                    </div>
+                </div>
+                <div class="conclusion">
+                    <i class="fas ${conclusionIcon}" style="color: ${conclusionColor}; margin-right: 8px;"></i>
+                    <strong>Kesimpulan:</strong> ${kesimpulan}
+                </div>
+            `;
+
+            resultsDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
