@@ -1,7 +1,5 @@
-
 ```
 # Analisis Sentimen Bahasa Indonesia
-
 Proyek ini adalah aplikasi **analisis sentimen teks Bahasa Indonesia** dengan dua pendekatan:
 1. **Lexicon-based** (berdasarkan daftar kata positif & negatif)
 2. **Naive Bayes sederhana** (manual, tanpa library ML berat)
@@ -15,14 +13,10 @@ Cocok untuk tugas kuliah, eksperimen NLP dasar, atau demo konsep analisis sentim
 ---
 
 ## Struktur File
-
-```
-
 ├── sentiment.py              # Program analisis sentimen berbasis Python
 ├── sentiment_analyzer.html   # Versi web (HTML + CSS + JavaScript)
 └── README.md                 # Dokumentasi proyek
 
-````
 
 ---
 
@@ -49,13 +43,13 @@ Cocok untuk tugas kuliah, eksperimen NLP dasar, atau demo konsep analisis sentim
 
 2. Install dependensi:
 
-   ```bash
+   ```
    pip install nltk
    ```
 
 3. Jalankan program:
 
-   ```bash
+   ```
    python sentiment.py
    ```
 
