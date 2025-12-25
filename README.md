@@ -14,7 +14,7 @@ Cocok untuk tugas kuliah, eksperimen NLP dasar, atau demo konsep analisis sentim
 
 ## Struktur File
 ├── sentiment.py              # Program analisis sentimen berbasis Python
-├── sentiment_analyzer.html   # Versi web (HTML + CSS + JavaScript)
+├── sentiment_analyzer.html   # Versi web (HTML)
 └── README.md                 # Dokumentasi proyek
 
 
