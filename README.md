@@ -122,19 +122,3 @@ Seperti menilai cerita panjang dengan membaca per paragraf, lalu menyimpulkan su
 Namun justru ini kelebihannya kalau tujuannya **belajar konsep dasar**.
 
 ---
-
-## Pengembangan Lanjutan (Opsional)
-
-* Menambah dataset training
-* Integrasi Flask / FastAPI
-* Simpan hasil analisis ke file
-* Dukungan emoji & slang Bahasa Indonesia
-
----
-
-## Lisensi
-
-Proyek ini bebas digunakan untuk **pembelajaran dan pengembangan non-komersial**.
-Silakan modifikasi sesuai kebutuhan.
-
----
