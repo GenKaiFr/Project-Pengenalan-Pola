@@ -1,10 +1,5 @@
-Siap. Aku bikinkan **README.md** yang rapi, jelas, dan enak dibaca—cukup teknis untuk dipakai, tapi nggak bikin pusing.
 
-Silakan langsung copy–paste isi di bawah ini ke file `README.md` di repository kamu.
-
----
-
-```md
+```
 # Analisis Sentimen Bahasa Indonesia
 
 Proyek ini adalah aplikasi **analisis sentimen teks Bahasa Indonesia** dengan dua pendekatan:
